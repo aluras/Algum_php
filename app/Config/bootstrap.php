@@ -66,6 +66,8 @@ Cache::config('default', array('engine' => 'File'));
  * CakePlugin::loadAll(); // Loads all plugins at once
  * CakePlugin::load('DebugKit'); // Loads a single plugin named DebugKit
  */
+CakePlugin::load('DebugKit');
+CakePlugin::load('Opauth', array('routes' => true, 'bootstrap' => true));
 
 /**
  * To prefer app translation over plugin translation, you can set
@@ -108,4 +110,8 @@ CakeLog::config('error', array(
 	'engine' => 'File',
 	'types' => array('warning', 'error', 'critical', 'alert', 'emergency'),
 	'file' => 'error',
+));
+Configure::write('Opauth.Strategy.Google', array(
+    'app_id' => '48636432617-l6duqf4jpe3irph355fas92mqfcimfmr.apps.googleusercontent.com',
+    'app_secret' => 'Vax1iehlEXy3bI6PP7hgoT1N'
 ));
