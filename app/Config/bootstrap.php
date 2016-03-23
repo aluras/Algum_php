@@ -111,7 +111,9 @@ CakeLog::config('error', array(
 	'types' => array('warning', 'error', 'critical', 'alert', 'emergency'),
 	'file' => 'error',
 ));
+
 Configure::write('Opauth.Strategy.Google', array(
-    'app_id' => '48636432617-l6duqf4jpe3irph355fas92mqfcimfmr.apps.googleusercontent.com',
-    'app_secret' => 'Vax1iehlEXy3bI6PP7hgoT1N'
+    'client_id' => '48636432617-l6duqf4jpe3irph355fas92mqfcimfmr.apps.googleusercontent.com',
+    'client_secret' => 'Vax1iehlEXy3bI6PP7hgoT1N'
 ));
+Configure::write('Opauth.path', '/Algum_php/auth/');
