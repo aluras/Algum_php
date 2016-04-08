@@ -26,7 +26,7 @@ App::uses('ControllerTask', 'Console/Command/Task');
 App::uses('DbConfigTask', 'Console/Command/Task');
 App::uses('Controller', 'Controller');
 
-if (!class_exists('UsersController')) {
+if (!class_exists('UsuariosController')) {
 	class UsersController extends Controller {
 	}
 }
