@@ -31,4 +31,18 @@ App::uses('Controller', 'Controller');
  * @link		http://book.cakephp.org/2.0/en/controllers.html#the-app-controller
  */
 class AppController extends Controller {
+    public $REST = false;
+
+    function beforeFilter()
+    {
+
+        // Add additional checks here to support other formats
+        if (isset($this->request->params['ext']) &&
+            ($this->request->params['ext'] == 'json'))
+        {
+            $this->REST = 'json';
+        }
+        $this->set('REST', $this->REST);
+    }
+
 }

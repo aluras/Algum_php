@@ -117,3 +117,7 @@ Configure::write('Opauth.Strategy.Google', array(
     'client_secret' => 'Vax1iehlEXy3bI6PP7hgoT1N'
 ));
 Configure::write('Opauth.path', '/Algum_php/auth/');
+
+
+App::uses('AppExceptionHandler', 'Lib');
+App::uses('AppErrorHandler', 'Lib');
