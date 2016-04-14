@@ -20,6 +20,8 @@
  */
 
 App::uses('Controller', 'Controller');
+App::uses('Usuario', 'Model');
+App::uses('Conta', 'Model');
 
 /**
  * Application Controller
@@ -32,9 +34,66 @@ App::uses('Controller', 'Controller');
  */
 class AppController extends Controller {
     public $REST = false;
+    public $email = '';
+    public $usuarioId = 0;
 
     function beforeFilter()
     {
+        try {
+            /*
+            require_once 'Google/autoload.php';
+            $token = $this->request->header('Application-Authorization');
+
+            $client = new Google_Client();
+            $google_client_id = '428110110118-aorl760dnq9g1095fk3gvji391h8f89n.apps.googleusercontent.com';
+            $client->setClientId($google_client_id);
+
+            $ticket = $client->verifyIdToken($token);
+
+            $data = $ticket->getAttributes();
+
+            $this->email = $data['payload']['email'];
+*/
+            $usuarioModel = new Usuario();
+
+            $usuario =  $usuarioModel->find('first',
+                array(
+                    //'conditions' => array('Usuario.email' => $this->email)
+                    'conditions' => array('Usuario.email' => 'andrelrs80@gmail.com')
+                ));
+
+            if(!$usuario){
+                $usuario = $usuarioModel->create();
+                //$usuario['email'] = $this->email;
+                $usuario['email'] = 'andrelrs80@gmail.com';
+
+                if (!$usuario = $usuarioModel->save($usuario)) {
+                    throw new Exception("Erro ao registrar o usuario");
+                }
+
+                $contaModel = new Conta();
+                $conta = $contaModel->create();
+                $conta['nome'] = 'Teste';
+                $conta['tipo_conta_id'] = '1';
+                $conta['ContaUsuario'] = array(
+                    array(
+                        'usuario_id' => $usuario["id"]
+                    )
+                );
+                if (!$contaModel->save($conta)) {
+                    throw new Exception("Erro ao registrar contas");
+                }
+
+            }
+
+            throw new Exception(json_encode($usuario));
+            $this->usuarioId = $usuario["Usuario"]["id"];
+        }catch (Exception $e){
+            throw new Exception("Erro na autenticacao: " . $e->getMessage());
+        }
+
+
+
 
         // Add additional checks here to support other formats
         if (isset($this->request->params['ext']) &&

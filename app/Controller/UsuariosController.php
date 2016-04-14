@@ -10,13 +10,11 @@ class UsuariosController extends AppController {
 
     public $components = array('RequestHandler');
 
-    public function opauth_complete() {
-        debug($this->data);
-    }
-
     public function index() {
         $this->autoRender = false;
-        $usuarios = $this->Usuario->find('all');
+        $usuarios = $this->Usuario->find('first', array(
+            'conditions' => array('Usuario.id' => $this->usuarioId)
+        ));
         $this->set(array(
             'usuarios' => $usuarios,
             '_serialize' => array('usuarios')
@@ -25,15 +23,28 @@ class UsuariosController extends AppController {
     }
 
     public function add() {
+        require_once 'Google/autoload.php';
+
+       // if (!$this->request->data){
+        //    $this->response->body('Error');
+       // }
+
+        //$email = $this->request->data['email'];
+       // $token = $this->request->data['idToken'];
+
+        //$client = new Google_Client();
+
+        //$ticket = $client->verifyIdToken($token);
+        //if ($ticket) {
+        //  $data = $ticket->getAttributes();
+        //}
+
         $this->autoRender = false;
 
-        if (!$this->request->data){
-            $this->response->body('Error');
-        }
-
+/*
         $usuario =  $this->Usuario->find('first',
                         array(
-                            'conditions' => array('Usuario.email' => $this->request->data['email'])
+                            'conditions' => array('Usuario.email' => $email)
                         ));
 
         if(!$usuario){
@@ -46,5 +57,7 @@ class UsuariosController extends AppController {
         }
 
         $this->response->body(json_encode($usuario));
+*/
+        $this->response->body($this->email);
     }
 }
