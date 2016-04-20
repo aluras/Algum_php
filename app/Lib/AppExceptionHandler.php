@@ -14,6 +14,6 @@ class AppExceptionHandler {
                 )
         );
 
-        echo json_encode($jsonError);
+        //echo json_encode($jsonError);
     }
 }

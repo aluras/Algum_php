@@ -22,6 +22,7 @@
 App::uses('Controller', 'Controller');
 App::uses('Usuario', 'Model');
 App::uses('Conta', 'Model');
+App::uses('Conta_padrao', 'Model');
 
 /**
  * Application Controller
@@ -40,7 +41,9 @@ class AppController extends Controller {
     function beforeFilter()
     {
         try {
-            /*
+
+            $this->layout = "";
+
             require_once 'Google/autoload.php';
             $token = $this->request->header('Application-Authorization');
 
@@ -53,40 +56,47 @@ class AppController extends Controller {
             $data = $ticket->getAttributes();
 
             $this->email = $data['payload']['email'];
-*/
+
             $usuarioModel = new Usuario();
 
             $usuario =  $usuarioModel->find('first',
                 array(
-                    //'conditions' => array('Usuario.email' => $this->email)
-                    'conditions' => array('Usuario.email' => 'andrelrs80@gmail.com')
+                    'conditions' => array('Usuario.email' => $this->email)
+                    //'conditions' => array('Usuario.email' => 'andrelrs80@gmail.com')
                 ));
 
             if(!$usuario){
                 $usuario = $usuarioModel->create();
-                //$usuario['email'] = $this->email;
-                $usuario['email'] = 'andrelrs80@gmail.com';
+                $usuario['email'] = $this->email;
+                //$usuario['email'] = 'andrelrs80@gmail.com';
 
                 if (!$usuario = $usuarioModel->save($usuario)) {
                     throw new Exception("Erro ao registrar o usuario");
                 }
 
-                $contaModel = new Conta();
-                $conta = $contaModel->create();
-                $conta['nome'] = 'Teste';
-                $conta['tipo_conta_id'] = '1';
-                $conta['ContaUsuario'] = array(
-                    array(
-                        'usuario_id' => $usuario["id"]
-                    )
-                );
-                if (!$contaModel->save($conta)) {
-                    throw new Exception("Erro ao registrar contas");
+
+                $contasPadraoModel = new Conta_padrao();
+                $contasPadrao = $contasPadraoModel->find('all');
+
+                foreach($contasPadrao as $contaPadrao){
+                    $contaModel = new Conta();
+                    $conta = $contaModel->create();
+                    $conta['nome'] = $contaPadrao['Conta_padrao']['nome'];
+                    $conta['tipo_conta_id'] = $contaPadrao['Conta_padrao']['tipo_conta_id'];
+                    $conta['ContaUsuario'] = array(
+                        array(
+                            'usuario_id' => $usuario["Usuario"]["id"]
+                        )
+                    );
+                    if (!$contaModel->saveAssociated($conta)) {
+                        throw new Exception("Erro ao registrar contas");
+                    }
+
                 }
 
             }
 
-            throw new Exception(json_encode($usuario));
+            //throw new Exception(json_encode($usuario));
             $this->usuarioId = $usuario["Usuario"]["id"];
         }catch (Exception $e){
             throw new Exception("Erro na autenticacao: " . $e->getMessage());
