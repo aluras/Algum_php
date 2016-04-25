@@ -40,66 +40,73 @@ class AppController extends Controller {
 
     function beforeFilter()
     {
-        try {
+        $this->layout = "";
 
-            $this->layout = "";
+        if($this->name != "CakeError"){
+            try {
 
-            require_once 'Google/autoload.php';
-            $token = $this->request->header('Application-Authorization');
 
-            $client = new Google_Client();
-            $google_client_id = '428110110118-aorl760dnq9g1095fk3gvji391h8f89n.apps.googleusercontent.com';
-            $client->setClientId($google_client_id);
 
-            $ticket = $client->verifyIdToken($token);
+                require_once 'Google/autoload.php';
+                $token = $this->request->header('Application-Authorization');
 
-            $data = $ticket->getAttributes();
+                $client = new Google_Client();
+                $google_client_id = '48636432617-l6duqf4jpe3irph355fas92mqfcimfmr.apps.googleusercontent.com';
+                $client->setClientId($google_client_id);
 
-            $this->email = $data['payload']['email'];
+                $ticket = $client->verifyIdToken($token);
 
-            $usuarioModel = new Usuario();
+                $data = $ticket->getAttributes();
 
-            $usuario =  $usuarioModel->find('first',
-                array(
-                    'conditions' => array('Usuario.email' => $this->email)
-                    //'conditions' => array('Usuario.email' => 'andrelrs80@gmail.com')
-                ));
+                $this->email = $data['payload']['email'];
 
-            if(!$usuario){
-                $usuario = $usuarioModel->create();
-                $usuario['email'] = $this->email;
-                //$usuario['email'] = 'andrelrs80@gmail.com';
+                $usuarioModel = new Usuario();
+                //$usuarioModel->Behaviors->load('Containable');
+                $usuario =  $usuarioModel->find('first',
+                    array(
+                        'conditions' => array('Usuario.email' => $this->email)
+                        //'conditions' => array('Usuario.email' => 'andrelrs80@gmail.com')
+                    ));
 
-                if (!$usuario = $usuarioModel->save($usuario)) {
-                    throw new Exception("Erro ao registrar o usuario");
+                if(!$usuario) {
+                    $usuario = $usuarioModel->create();
+                    $usuario['email'] = $this->email;
+                    //$usuario['email'] = 'andrelrs80@gmail.com';
+
+                    if (!$usuario = $usuarioModel->save($usuario)) {
+                        throw new Exception("Erro ao registrar o usuario");
+                    }
                 }
 
+                if(count($usuario["ContaUsuario"])==0) {
+                    $contasPadraoModel = new Conta_padrao();
+                    $contasPadrao = $contasPadraoModel->find('all');
 
-                $contasPadraoModel = new Conta_padrao();
-                $contasPadrao = $contasPadraoModel->find('all');
+                    foreach($contasPadrao as $contaPadrao){
+                        $contaModel = new Conta();
+                        $conta = $contaModel->create();
+                        $conta['nome'] = $contaPadrao['Conta_padrao']['nome'];
+                        $conta['tipo_conta_id'] = $contaPadrao['Conta_padrao']['tipo_conta_id'];
+                        $conta['ContaUsuario'] = array(
+                            array(
+                                'usuario_id' => $usuario["Usuario"]["id"]
+                            )
+                        );
+                        if (!$contaModel->saveAssociated($conta)) {
+                            throw new Exception("Erro ao registrar contas");
+                        }
 
-                foreach($contasPadrao as $contaPadrao){
-                    $contaModel = new Conta();
-                    $conta = $contaModel->create();
-                    $conta['nome'] = $contaPadrao['Conta_padrao']['nome'];
-                    $conta['tipo_conta_id'] = $contaPadrao['Conta_padrao']['tipo_conta_id'];
-                    $conta['ContaUsuario'] = array(
-                        array(
-                            'usuario_id' => $usuario["Usuario"]["id"]
-                        )
-                    );
-                    if (!$contaModel->saveAssociated($conta)) {
-                        throw new Exception("Erro ao registrar contas");
                     }
 
                 }
 
+                //throw new Exception(json_encode($usuario));
+                $this->usuarioId = $usuario["Usuario"]["id"];
+            }catch (Exception $e){
+                throw new Exception("Erro na autenticacao: " . $e->getMessage());
             }
 
-            //throw new Exception(json_encode($usuario));
-            $this->usuarioId = $usuario["Usuario"]["id"];
-        }catch (Exception $e){
-            throw new Exception("Erro na autenticacao: " . $e->getMessage());
+
         }
 
 
