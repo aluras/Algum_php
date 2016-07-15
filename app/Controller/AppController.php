@@ -45,7 +45,7 @@ class AppController extends Controller {
         if($this->name != "CakeError"){
             try {
 
-
+/*
 
                 require_once 'Google/autoload.php';
                 $token = $this->request->header('Application-Authorization');
@@ -102,6 +102,10 @@ class AppController extends Controller {
 
                 //throw new Exception(json_encode($usuario));
                 $this->usuarioId = $usuario["Usuario"]["id"];
+
+*/
+                //throw new Exception("meu deus");
+                $this->usuarioId = 2;
             }catch (Exception $e){
                 throw new Exception("Erro na autenticacao: " . $e->getMessage());
             }

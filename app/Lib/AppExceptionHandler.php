@@ -10,7 +10,7 @@ class AppExceptionHandler {
     public static function handle($error) {
         $jsonError[] = array(
                 "erro" => array(
-                    "mensagem" => $error->getMessage()
+                    "mensagem" => "doido"//$error->getMessage()
                 )
         );
 
