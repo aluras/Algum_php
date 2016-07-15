@@ -5,29 +5,28 @@
  * Date: 13/04/2016
  * Time: 16:08
  */
+App::uses('ContaUsuario', 'Model');
 
 class ContasController extends AppController {
 
     public function index() {
         $this->autoRender = false;
-/*
-        $this->set(array(
-            'usuarios' => $usuarios,
-            '_serialize' => array('usuarios')
-        ));
-*/
 
-        $this->Conta->Behaviors->load('Containable');
-        $dados = $this->Conta->find('all', array(
-            'contain' => array(
-                'ContaUsuario' => array(
-                    'conditions' => array(
-                        'usuario_id' => $this->usuarioId
+        //$this->Conta->Behaviors->load('Containable');
+
+        $dados = $this->Conta->find('all',
+            array(
+                'joins' => array(
+                    array(
+                        'table' => 'conta_usuarios',
+                        'alias' => 'ContaUsuario',
+                        'conditions' => array('ContaUsuario.conta_id = Conta.id')
                     )
                 ),
-                'TipoConta'
-            )
-        ));
+                'conditions' => array(
+                    'ContaUsuario.usuario_id' => $this->usuarioId
+                )
+            ));
 
         $this->response->body(json_encode($dados));
     }
