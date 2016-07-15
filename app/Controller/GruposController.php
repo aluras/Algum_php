@@ -16,7 +16,7 @@ class GruposController extends AppController{
         $dados = $this->Grupo->find('all',
             array(
                 'conditions' => array(
-                    'id_usuarios' => $this->usuarioId
+                    'id_usuario' => $this->usuarioId
                 )
             ));
 
