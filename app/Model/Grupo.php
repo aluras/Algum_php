@@ -2,7 +2,7 @@
 App::uses('AppModel', 'Model');
 
 class Grupo extends AppModel{
-    public $useTable = 'grupo_usuarios';
+    public $useTable = 'grupos';
 
     public $belongsTo = array(
         'TipoGrupo' => array(

@@ -5,7 +5,6 @@
  * Date: 13/04/2016
  * Time: 16:08
  */
-App::uses('ContaUsuario', 'Model');
 
 class ContasController extends AppController {
 
