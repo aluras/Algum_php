@@ -25,6 +25,7 @@ class LancamentosController extends AppController {
                 'conditions' => array(
                     'ContaUsuario.usuario_id' => $this->usuarioId
                 ),
+                'order' => array('Lancamento.id'),
                 'contain' => 'Lancamento'
             ));
 
