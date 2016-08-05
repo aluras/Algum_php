@@ -50,6 +50,10 @@ class AppController extends Controller {
                 require_once 'Google/autoload.php';
                 $token = $this->request->header('Application-Authorization');
 
+                if (!$token){
+                    throw new Exception("Ops, sem autorização!");
+                }
+
                 $client = new Google_Client();
                 $google_client_id = '48636432617-l6duqf4jpe3irph355fas92mqfcimfmr.apps.googleusercontent.com';
                 $client->setClientId($google_client_id);
@@ -107,7 +111,7 @@ class AppController extends Controller {
                 //throw new Exception("meu deus");
                 //$this->usuarioId = 2;
             }catch (Exception $e){
-                throw new Exception("Erro na autenticacao: " . $e->getMessage());
+                throw new Exception("Erro: " . $e->getMessage());
             }
 
 
