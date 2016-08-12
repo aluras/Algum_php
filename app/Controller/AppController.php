@@ -82,7 +82,7 @@ class AppController extends Controller {
                     }
                 }
 
-                if(count($usuario["ContaUsuario"])==0) {
+                if(!isset($usuario["ContaUsuario"]) || count($usuario["ContaUsuario"])==0) {
                     $contasPadraoModel = new Conta_padrao();
                     $contasPadrao = $contasPadraoModel->find('all');
 
@@ -109,7 +109,7 @@ class AppController extends Controller {
 
 
                 //throw new Exception("meu deus");
-                //$this->usuarioId = 2;
+                //$this->usuarioId = 11;
             }catch (Exception $e){
                 throw new Exception("Erro: " . $e->getMessage());
             }

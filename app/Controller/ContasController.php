@@ -13,20 +13,32 @@ class ContasController extends AppController {
 
         //$this->Conta->Behaviors->load('Containable');
 
+        $db = $this->Conta->getDataSource();
+        $dados =  $db->fetchAll(
+            'SELECT * from contas Conta
+            INNER JOIN conta_usuarios ContaUsuario ON ContaUsuario.conta_id = Conta.id
+            WHERE ContaUsuario.usuario_id = :usuarioId',
+
+            array('usuarioId' => $this->usuarioId)
+
+        );
+        /*
         $dados = $this->Conta->find('all',
             array(
                 'joins' => array(
                     array(
                         'table' => 'conta_usuarios',
                         'alias' => 'ContaUsuario',
-                        'conditions' => array('ContaUsuario.conta_id = Conta.id')
+                        'conditions' => array('ContaUsuario.conta_id = Conta.id',
+                                            'ContaUsuario.usuario_id' => $this->usuarioId)
                     )
                 ),
                 'conditions' => array(
-                    'ContaUsuario.usuario_id' => $this->usuarioId
+                    'ContaUsuario.usuario_id' => $this->usuarioId,
+                    'Conta.id' => 91
                 )
             ));
-
+        */
         $this->response->body(json_encode($dados));
     }
 
