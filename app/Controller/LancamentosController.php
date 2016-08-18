@@ -24,6 +24,7 @@ class LancamentosController extends AppController {
                 ),
                 'conditions' => array(
                     'ContaUsuario.usuario_id' => $this->usuarioId
+                    ,'excluido' => 0
                 ),
                 'order' => array('Lancamento.id'),
                 'contain' => 'Lancamento'
@@ -97,6 +98,21 @@ class LancamentosController extends AppController {
             throw new Exception("Ocorreu uma erro.");
         }
 
+
+
+    }
+
+    public function delete($id){
+        $this->autoRender = false;
+
+        $dados['excluido'] = 1;
+
+        $this->Lancamento->id = $id;
+        if ($this->Lancamento->save($dados)) {
+            $message = 'Saved';
+        } else {
+            throw new Exception("Ocorreu uma erro.");
+        }
 
 
     }
