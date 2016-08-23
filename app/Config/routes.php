@@ -36,6 +36,11 @@ Router::connect(
     array('controller' => 'users', 'action' => 'opauth_complete')
 );
 
+Router::connect(
+    "/tipo_contas",
+    array('controller' => 'contas','action' => 'indexTipoContas', 'method' => 'GET')
+);
+
 /**
  * Load all plugin routes. See the CakePlugin documentation on
  * how to customize the loading of plugin routes.

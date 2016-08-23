@@ -5,6 +5,7 @@
  * Date: 13/04/2016
  * Time: 16:08
  */
+App::uses('TipoConta', 'Model');
 
 class ContasController extends AppController {
 
@@ -40,6 +41,15 @@ class ContasController extends AppController {
             ));
         */
         $this->response->body(json_encode($dados));
+    }
+
+    public function indexTipoContas(){
+        $this->autoRender = false;
+
+        $tipoConta = new TipoConta();
+        $dados = $tipoConta->find('all');
+        $this->response->body(json_encode($dados));
+
     }
 
     public function view($id){
