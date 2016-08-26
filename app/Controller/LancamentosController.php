@@ -98,6 +98,9 @@ class LancamentosController extends AppController {
             throw new Exception("Ocorreu uma erro.");
         }
 
+        $conta['Conta']['saldo'] = $conta['Conta']['saldo'] +  $this->request->data['valor'];
+        $contaModel->save($conta);
+
 
 
     }
@@ -114,6 +117,17 @@ class LancamentosController extends AppController {
             throw new Exception("Ocorreu uma erro.");
         }
 
+        $lancamento = $this->Lancamento->find('first', array(
+            'conditions' => array('Lancamento.id' => $id)
+        ));
+
+        $contaModel = new Conta();
+        $contaModel->id = $lancamento['Lancamento']['conta_id'];
+        $conta =  $contaModel->find('first', array(
+            'conditions' => array('Conta.id' => $lancamento['Lancamento']['conta_id'])
+        ));
+        $conta['Conta']['saldo'] = $conta['Conta']['saldo'] - $lancamento['Lancamento']['valor'];
+        $contaModel->save($conta);
 
     }
 } 
