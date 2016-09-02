@@ -19,7 +19,9 @@ class ContasController extends AppController {
         $dados =  $db->fetchAll(
             'SELECT * from contas Conta
             INNER JOIN conta_usuarios ContaUsuario ON ContaUsuario.conta_id = Conta.id
-            WHERE ContaUsuario.usuario_id = :usuarioId',
+            INNER JOIN usuarios Usuarios ON Usuarios.id = ContaUsuario.usuario_id
+            WHERE ContaUsuario.usuario_id = :usuarioId
+            AND Conta.modified > DATE_ADD(Usuarios.sincronizado,INTERVAL -1 DAY)',
 
             array('usuarioId' => $this->usuarioId)
 
@@ -109,12 +111,14 @@ class ContasController extends AppController {
         }
 
         //verifica valores
+        /*
         if (!array_key_exists("saldo_inicial", $data)){
             throw new Exception("Saldo inicial inválido.");
         }
         if (!is_numeric($data['saldo_inicial'])){
             throw new Exception("Saldo inicial inválido.");
         }
+        */
         if (!array_key_exists("saldo", $data)){
             throw new Exception("Saldo inválido.");
         }

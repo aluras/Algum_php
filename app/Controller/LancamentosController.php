@@ -13,6 +13,18 @@ class LancamentosController extends AppController {
     public function index() {
         $this->autoRender = false;
 
+        $db = $this->Lancamento->getDataSource();
+        $dados =  $db->fetchAll(
+            'SELECT Lancamento.* from lancamentos Lancamento
+            INNER JOIN conta_usuarios ContaUsuario ON ContaUsuario.conta_id = Lancamento.conta_id
+            INNER JOIN usuarios Usuarios ON Usuarios.id = ContaUsuario.usuario_id
+            WHERE ContaUsuario.usuario_id = :usuarioId
+            AND Lancamento.modified > DATE_ADD(Usuarios.sincronizado,INTERVAL -1 DAY)',
+
+            array('usuarioId' => $this->usuarioId)
+
+        );
+        /*
         $dados = $this->Lancamento->find('all',
             array(
                 'joins' => array(
@@ -25,11 +37,12 @@ class LancamentosController extends AppController {
                 'conditions' => array(
                     'ContaUsuario.usuario_id' => $this->usuarioId
                     ,'excluido' => 0
+                    ,'data > ' =>
                 ),
                 'order' => array('Lancamento.id'),
                 'contain' => 'Lancamento'
             ));
-
+        */
         $this->response->body(json_encode($dados));
     }
 

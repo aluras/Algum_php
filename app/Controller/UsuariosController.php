@@ -22,6 +22,20 @@ class UsuariosController extends AppController {
         $this->response->body(json_encode($usuarios));
     }
 
+    public function edit($id) {
+        $this->autoRender = false;
+
+        $d = DateTime::createFromFormat('d/m/Y', $this->request->data['sincronizado']);
+        $this->request->data['sincronizado'] = $d->format('Y-m-d');
+
+        $this->Usuario->id = $id;
+        if ($dados = $this->Usuario->save($this->request->data)) {
+            $this->response->body(json_encode($dados));
+        } else {
+            throw new Exception("Ocorreu uma erro.");
+        }
+    }
+
     public function add() {
         require_once 'Google/autoload.php';
 
