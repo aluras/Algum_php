@@ -111,8 +111,11 @@ class LancamentosController extends AppController {
             throw new Exception("Ocorreu uma erro.");
         }
 
-        $conta['Conta']['saldo'] = $conta['Conta']['saldo'] +  $this->request->data['valor'];
-        $contaModel->save($conta);
+        $editConta = [
+            'saldo' => $conta['Conta']['saldo'] +  $this->request->data['valor']
+        ];
+        $contaModel->id = $this->request->data['conta_id'];
+        $contaModel->save($editConta);
 
 
 
