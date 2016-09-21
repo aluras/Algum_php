@@ -5,21 +5,99 @@
  * Date: 07/06/2016
  * Time: 12:51
  */
+App::uses('TipoGrupo', 'Model');
 
 class GruposController extends AppController{
 
     public function index() {
         $this->autoRender = false;
 
-        $this->Grupo->Behaviors->load('Containable');
-
+        //$this->Grupo->Behaviors->load('Containable');
+        /*
         $dados = $this->Grupo->find('all',
             array(
                 'conditions' => array(
                     //'id_usuario' => $this->usuarioId
                 )
             ));
+        */
+
+        $db = $this->Grupo->getDataSource();
+        $dados =  $db->fetchAll(
+            'SELECT * from grupos Grupo
+            INNER JOIN grupo_usuarios GrupoUsuario ON GrupoUsuario.grupo_id = Grupo.id
+            INNER JOIN usuarios Usuarios ON Usuarios.id = GrupoUsuario.usuario_id
+            WHERE GrupoUsuario.usuario_id = :usuarioId
+            AND Grupo.modified > DATE_ADD(Usuarios.sincronizado,INTERVAL -1 DAY)',
+
+            array('usuarioId' => $this->usuarioId)
+
+        );
 
         $this->response->body(json_encode($dados));
     }
+
+    public function indexTipoGrupos(){
+        $this->autoRender = false;
+
+        $tipoGrupo = new TipoGrupo();
+        $dados = $tipoGrupo->find('all');
+        $this->response->body(json_encode($dados));
+
+    }
+
+    public function add() {
+        $this->autoRender = false;
+        $this->request->data['GrupoUsuario'] = array(
+            array(
+                'usuario_id' => $this->request->data['usuario_id']
+            )
+        );
+
+        $this->validaDados($this->request->data);
+
+        $this->Grupo->create();
+        if ($this->Grupo->saveAssociated($this->request->data)) {
+            $this->view($this->Conta->id);
+        } else {
+            throw new Exception("Ocorreu um erro.");
+        }
+
+    }
+
+    public function edit($id) {
+        $this->autoRender = false;
+
+        $this->validaDados($this->request->data);
+
+        $this->Grupo->id = $id;
+        if ($dados = $this->Grupo->save($this->request->data)) {
+            $this->response->body(json_encode($dados));
+        } else {
+            throw new Exception("Ocorreu uma erro.");
+        }
+    }
+
+    private function validaDados($data){
+        //verifica tipo conta
+        if (!array_key_exists("tipo_grupo_id", $data)){
+            throw new Exception("Tipo de categoria inválido.");
+        }
+        $tipoGrupoModel = new TipoGrupo();
+        $tipoGrupo =  $tipoGrupoModel->find('first',
+            array(
+                'conditions' => array('TipoGrupo.id' => $data['tipo_grupo_id'])
+            ));
+        if (!$tipoGrupo){
+            throw new Exception("Tipo de categoria inválido.");
+        }
+
+        //verifica nome
+        if ($data['nome'] == ''){
+            throw new Exception("Nome inválido.");
+        }
+
+        return true;
+    }
+
 } 

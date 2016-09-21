@@ -23,6 +23,8 @@ App::uses('Controller', 'Controller');
 App::uses('Usuario', 'Model');
 App::uses('Conta', 'Model');
 App::uses('Conta_padrao', 'Model');
+App::uses('Grupo', 'Model');
+App::uses('Grupo_padrao', 'Model');
 
 /**
  * Application Controller
@@ -98,6 +100,28 @@ class AppController extends Controller {
                         );
                         if (!$contaModel->saveAssociated($conta)) {
                             throw new Exception("Erro ao registrar contas");
+                        }
+
+                    }
+
+                }
+
+                if(!isset($usuario["GrupoUsuario"]) || count($usuario["GrupoUsuario"])==0) {
+                    $gruposPadraoModel = new Grupo_padrao();
+                    $gruposPadrao = $gruposPadraoModel->find('all');
+
+                    foreach($gruposPadrao as $grupoPadrao){
+                        $grupoModel = new Grupo();
+                        $grupo = $grupoModel->create();
+                        $grupo['nome'] = $grupoPadrao['Grupo_padrao']['nome'];
+                        $grupo['id_tipo_grupo'] = $grupoPadrao['Grupo_padrao']['id_tipo_grupo'];
+                        $grupo['GrupoUsuario'] = array(
+                            array(
+                                'usuario_id' => $usuario["Usuario"]["id"]
+                            )
+                        );
+                        if (!$grupoModel->saveAssociated($grupo)) {
+                            throw new Exception("Erro ao registrar grupos");
                         }
 
                     }

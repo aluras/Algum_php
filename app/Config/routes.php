@@ -41,6 +41,11 @@ Router::connect(
     array('controller' => 'contas','action' => 'indexTipoContas', 'method' => 'GET')
 );
 
+Router::connect(
+    "/tipo_grupos",
+    array('controller' => 'grupos','action' => 'indexTipoGrupos', 'method' => 'GET')
+);
+
 /**
  * Load all plugin routes. See the CakePlugin documentation on
  * how to customize the loading of plugin routes.
@@ -54,6 +59,9 @@ Router::connect(
     Router::parseExtensions('json');
 
     Router::mapResources('contas');
+    Router::parseExtensions('json');
+
+    Router::mapResources('grupos');
     Router::parseExtensions('json');
 /**
  * Load the CakePHP default routes. Only remove this if you do not want to use
