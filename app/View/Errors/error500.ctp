@@ -1,1 +1,8 @@
-<?php echo $message; ?>
+<?php
+
+echo json_encode(array(
+    'error' => array(
+        'name' => $name,
+        'url' => $url
+    )
+));

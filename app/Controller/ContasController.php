@@ -13,6 +13,7 @@ class ContasController extends AppController {
     public function index() {
         $this->autoRender = false;
 
+        //throw new Exception("Ocorreu uma erro.");
         //$this->Conta->Behaviors->load('Containable');
 
         $db = $this->Conta->getDataSource();
@@ -134,4 +135,17 @@ class ContasController extends AppController {
         return true;
     }
 
+    public function delete($id){
+        $this->autoRender = false;
+
+        $dados['excluido'] = 1;
+
+        $this->Conta->id = $id;
+        if ($this->Conta->save($dados)) {
+            $message = 'Saved';
+        } else {
+            throw new Exception("Ocorreu uma erro.");
+        }
+
+    }
 } 

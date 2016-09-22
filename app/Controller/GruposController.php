@@ -46,6 +46,15 @@ class GruposController extends AppController{
 
     }
 
+    public function view($id){
+        $this->Grupo->Behaviors->load('Containable');
+        $dados = $this->Grupo->find('first', array(
+            'conditions' => array('Grupo.id' => $id)
+        ));
+
+        $this->response->body(json_encode($dados));
+    }
+
     public function add() {
         $this->autoRender = false;
         $this->request->data['GrupoUsuario'] = array(
@@ -58,7 +67,7 @@ class GruposController extends AppController{
 
         $this->Grupo->create();
         if ($this->Grupo->saveAssociated($this->request->data)) {
-            $this->view($this->Conta->id);
+            $this->view($this->Grupo->id);
         } else {
             throw new Exception("Ocorreu um erro.");
         }
@@ -80,13 +89,13 @@ class GruposController extends AppController{
 
     private function validaDados($data){
         //verifica tipo conta
-        if (!array_key_exists("tipo_grupo_id", $data)){
+        if (!array_key_exists("id_tipo_grupo", $data)){
             throw new Exception("Tipo de categoria inválido.");
         }
         $tipoGrupoModel = new TipoGrupo();
         $tipoGrupo =  $tipoGrupoModel->find('first',
             array(
-                'conditions' => array('TipoGrupo.id' => $data['tipo_grupo_id'])
+                'conditions' => array('TipoGrupo.id' => $data['id_tipo_grupo'])
             ));
         if (!$tipoGrupo){
             throw new Exception("Tipo de categoria inválido.");
@@ -100,4 +109,17 @@ class GruposController extends AppController{
         return true;
     }
 
+    public function delete($id){
+        $this->autoRender = false;
+
+        $dados['excluido'] = 1;
+
+        $this->Grupo->id = $id;
+        if ($this->Grupo->save($dados)) {
+            $message = 'Saved';
+        } else {
+            throw new Exception("Ocorreu uma erro.");
+        }
+
+    }
 } 
