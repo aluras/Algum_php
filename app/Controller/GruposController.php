@@ -25,9 +25,8 @@ class GruposController extends AppController{
         $db = $this->Grupo->getDataSource();
         $dados =  $db->fetchAll(
             'SELECT * from grupos Grupo
-            INNER JOIN grupo_usuarios GrupoUsuario ON GrupoUsuario.grupo_id = Grupo.id
-            INNER JOIN usuarios Usuarios ON Usuarios.id = GrupoUsuario.usuario_id
-            WHERE GrupoUsuario.usuario_id = :usuarioId
+            INNER JOIN usuarios Usuarios ON Usuarios.id = Grupo.usuario_id
+            WHERE Grupo.usuario_id = :usuarioId
             AND Grupo.modified > DATE_ADD(Usuarios.sincronizado,INTERVAL -1 DAY)',
 
             array('usuarioId' => $this->usuarioId)
@@ -57,11 +56,7 @@ class GruposController extends AppController{
 
     public function add() {
         $this->autoRender = false;
-        $this->request->data['GrupoUsuario'] = array(
-            array(
-                'usuario_id' => $this->request->data['usuario_id']
-            )
-        );
+        $this->request->data['usuario_id'] = $this->usuarioId;
 
         $this->validaDados($this->request->data);
 
