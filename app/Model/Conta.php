@@ -6,6 +6,6 @@ class Conta extends AppModel {
         'ContaUsuario'
     );
     public $belongsTo = array(
-        'TipoConta'
+        'TipoConta','Usuario'
     );
 } 

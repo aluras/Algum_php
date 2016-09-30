@@ -1,10 +1,7 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: sn1007071
- * Date: 23/03/2016
- * Time: 10:13
- */
+
+App::uses('TipoGrupo', 'Model');
+App::uses('TipoConta', 'Model');
 
 class UsuariosController extends AppController {
 
@@ -12,14 +9,20 @@ class UsuariosController extends AppController {
 
     public function index() {
         $this->autoRender = false;
-        $usuarios = $this->Usuario->find('first', array(
-            'conditions' => array('Usuario.id' => $this->usuarioId)
+        $dados = $this->Usuario->find('first', array(
+            'conditions' => array('Usuario.id' => $this->usuarioId),
+            'recursive' => 2
         ));
-        $this->set(array(
-            'usuarios' => $usuarios,
-            '_serialize' => array('usuarios')
-        ));
-        $this->response->body(json_encode($usuarios));
+
+        $tipoGrupo = new TipoGrupo();
+        $dadosTipoGrupo= $tipoGrupo->find('all');
+        $dados["TipoGrupo"] = $dadosTipoGrupo;
+
+        $tipoConta = new TipoConta();
+        $dadosTipoConta = $tipoConta->find('all');
+        $dados["TipoConta"] = $dadosTipoConta;
+
+        $this->response->body(json_encode($dados));
     }
 
     public function edit($id) {
@@ -39,39 +42,10 @@ class UsuariosController extends AppController {
     public function add() {
         require_once 'Google/autoload.php';
 
-       // if (!$this->request->data){
-        //    $this->response->body('Error');
-       // }
-
-        //$email = $this->request->data['email'];
-       // $token = $this->request->data['idToken'];
-
-        //$client = new Google_Client();
-
-        //$ticket = $client->verifyIdToken($token);
-        //if ($ticket) {
-        //  $data = $ticket->getAttributes();
-        //}
+        $data = $this->request->input('json_decode');
 
         $this->autoRender = false;
 
-/*
-        $usuario =  $this->Usuario->find('first',
-                        array(
-                            'conditions' => array('Usuario.email' => $email)
-                        ));
-
-        if(!$usuario){
-            $this->Usuario->create();
-            if ($usuario = $this->Usuario->save($this->request->data)) {
-                $message = 'Saved';
-            } else {
-                $message = 'Error';
-            }
-        }
-
-        $this->response->body(json_encode($usuario));
-*/
         $this->response->body($this->email);
     }
 }

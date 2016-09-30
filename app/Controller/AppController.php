@@ -24,6 +24,7 @@ App::uses('Usuario', 'Model');
 App::uses('Conta', 'Model');
 App::uses('Conta_padrao', 'Model');
 App::uses('Grupo', 'Model');
+App::uses('GrupoUsuario', 'Model');
 App::uses('Grupo_padrao', 'Model');
 
 /**
@@ -79,8 +80,10 @@ class AppController extends Controller {
                 if(!$usuario) {
                     $usuario = $usuarioModel->create();
                     $usuario['email'] = $this->email;
-                    //$usuario['email'] = 'andrelrs80@gmail.com';
                     $usuario['nome'] = $this->nomeUsuario;
+
+                    $d = date('Y-m-d');
+                    $usuario['sincronizado'] = $d;
 
                     if (!$usuario = $usuarioModel->save($usuario)) {
                         throw new Exception("Erro ao registrar o usuario");
@@ -96,9 +99,11 @@ class AppController extends Controller {
                         $conta = $contaModel->create();
                         $conta['Conta']['nome'] = $contaPadrao['Conta_padrao']['nome'];
                         $conta['Conta']['tipo_conta_id'] = $contaPadrao['Conta_padrao']['tipo_conta_id'];
+                        $conta['Conta']['usuario_id'] = $usuario["Usuario"]["id"];
                         $conta['ContaUsuario'] = array(
                             array(
-                                'usuario_id' => $usuario["Usuario"]["id"]
+                                'usuario_id' => $usuario["Usuario"]["id"],
+                                'aceita' => 1
                             )
                         );
                         if (!$contaModel->saveAssociated($conta)) {
@@ -109,17 +114,22 @@ class AppController extends Controller {
 
                 }
 
-                if(!isset($usuario["Grupo"]) || count($usuario["Grupo"])==0) {
-                    $gruposPadraoModel = new Grupo_padrao();
-                    $gruposPadrao = $gruposPadraoModel->find('all');
+                if(!isset($usuario["GrupoUsuario"]) || count($usuario["GrupoUsuario"])==0) {
+                    $gruposModel = new Grupo();
+                    $gruposPadrao = $gruposModel->find('all',
+                        array(
+                            'conditions' => array(
+                                'padrao' => 1
+                            )
+                        ));
 
                     foreach($gruposPadrao as $grupoPadrao){
-                        $grupoModel = new Grupo();
-                        $grupo = $grupoModel->create();
-                        $grupo['Grupo']['nome'] = $grupoPadrao['Grupo_padrao']['nome'];
-                        $grupo['Grupo']['id_tipo_grupo'] = $grupoPadrao['Grupo_padrao']['id_tipo_grupo'];
-                        $grupo['Grupo']['usuario_id'] = $usuario["Usuario"]["id"];
-                        if (!$grupoModel->saveAssociated($grupo)) {
+                        $grupoUsuarioModel = new GrupoUsuario();
+                        $grupoUsuario = $grupoUsuarioModel->create();
+                        $grupoUsuario['GrupoUsuario']['grupo_id'] = $grupoPadrao['Grupo']['id'];
+                        $grupoUsuario['GrupoUsuario']['usuario_id'] = $usuario["Usuario"]["id"];
+                        $grupoUsuario['GrupoUsuario']['aceito'] = 1;
+                        if (!$grupoUsuarioModel->save($grupoUsuario)) {
                             throw new Exception("Erro ao registrar grupos");
                         }
 

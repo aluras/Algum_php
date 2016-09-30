@@ -15,35 +15,35 @@ class ContasController extends AppController {
 
         //throw new Exception("Ocorreu uma erro.");
         //$this->Conta->Behaviors->load('Containable');
-
+/*
         $db = $this->Conta->getDataSource();
         $dados =  $db->fetchAll(
             'SELECT * from contas Conta
             INNER JOIN conta_usuarios ContaUsuario ON ContaUsuario.conta_id = Conta.id
             INNER JOIN usuarios Usuarios ON Usuarios.id = ContaUsuario.usuario_id
-            WHERE ContaUsuario.usuario_id = :usuarioId
+            WHERE (SELECT COUNT(*) FROM conta_usuarios cu WHERE cu.conta_id = Conta.id AND cu.usuario_id = :usuarioId) > 0
             AND Conta.modified > DATE_ADD(Usuarios.sincronizado,INTERVAL -1 DAY)',
 
             array('usuarioId' => $this->usuarioId)
 
         );
-        /*
+*/
+
         $dados = $this->Conta->find('all',
             array(
                 'joins' => array(
                     array(
                         'table' => 'conta_usuarios',
                         'alias' => 'ContaUsuario',
-                        'conditions' => array('ContaUsuario.conta_id = Conta.id',
-                                            'ContaUsuario.usuario_id' => $this->usuarioId)
+                        'conditions' => array('ContaUsuario.conta_id = Conta.id')
                     )
                 ),
+                'recursive' => 2,
                 'conditions' => array(
-                    'ContaUsuario.usuario_id' => $this->usuarioId,
-                    'Conta.id' => 91
+                    'ContaUsuario.usuario_id' => $this->usuarioId
                 )
             ));
-        */
+
         $this->response->body(json_encode($dados));
     }
 

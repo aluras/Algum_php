@@ -1,9 +1,8 @@
 <?php
 App::uses('AppModel', 'Model');
 
-class ContaUsuario extends AppModel{
+class GrupoUsuario extends AppModel {
     public $belongsTo = array(
-        'Conta'
+        'Grupo'
     );
-
-}
+} 

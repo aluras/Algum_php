@@ -7,7 +7,7 @@ App::uses('ContaUsuario', 'Model');
 class Usuario extends AppModel {
 
     public $hasMany = array(
-        'ContaUsuario','Grupo'
+        'ContaUsuario','GrupoUsuario'
     );
 /*
     public function beforeSave($options = array()) {
