@@ -1,0 +1,30 @@
+ALTER TABLE `algum_v0`.`usuarios` 
+ADD COLUMN `nome` VARCHAR(200) NULL AFTER `email`;
+
+ALTER TABLE `algum_v0`.`contas` 
+ADD COLUMN `usuario_id` INT(10) UNSIGNED NULL AFTER `tipo_conta_id`;
+
+ALTER TABLE `algum_v0`.`conta_usuarios` 
+ADD COLUMN `aceita` INT(10) NOT NULL DEFAULT 0 AFTER `usuario_id`;
+ALTER TABLE `algum_v0`.`conta_usuarios` 
+ADD COLUMN `excluido` INT(10) NOT NULL DEFAULT 0 AFTER `aceita`;
+
+
+ALTER TABLE `algum_v0`.`grupos` 
+DROP COLUMN `usuario_id`,
+DROP COLUMN `excluido`,
+ADD COLUMN `padrao` INT(10) UNSIGNED NOT NULL DEFAULT 0 AFTER `id_tipo_grupo`;
+
+ALTER TABLE `algum_v0`.`grupo_usuarios` 
+ADD COLUMN `aceito` INT(10) UNSIGNED NOT NULL DEFAULT 0 AFTER `usuario_id`,
+ADD COLUMN `excluido` INT(10) UNSIGNED NOT NULL DEFAULT 0 AFTER `aceito`;
+
+insert into grupos
+select id, nome, id_tipo_grupo, 1, now(), now()
+from grupos_padrao
+
+
+
+
+
+

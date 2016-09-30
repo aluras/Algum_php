@@ -1,0 +1,17 @@
+SELECT contas.id, contas.nome ,SUM(lancamentos.valor) 
+FROM lancamentos 
+INNER JOIN contas ON contas.id = lancamentos.conta_id 
+WHERE lancamentos.excluido = 0
+GROUP BY contas.id,contas.nome
+
+UPDATE contas SET contas.saldo = contas.saldo_inicial + (SELECT SUM(valor) 
+                                                         FROM lancamentos 
+                                                         WHERE conta_id = contas.id
+                                                        AND excluido = 0)
+														
+														
+														
+SELECT * FROM `lancamentos`
+WHERE conta_id = 62
+AND excluido = 0
+ORDER BY data
